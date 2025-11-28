@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KRESZ 28.§ Tanácsadó</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+</head>
+<body>
+    <button id="theme-toggle" class="theme-toggle">💡</button>
+
+    <div class="container">
+        <h1>🚗 KRESZ 28.§: Elsőbbségadás</h1>
+        <p class="text-center">Kérlek, add meg a járművek és az út adatait!</p>
+        
+        <form method="POST">
+            <div class="cards-wrapper">
+                <div class="card vehicle-a">
+                    <h2>Ön ('A' jármű)</h2>
+                    
+                    <div class="form-group">
+                        <label>Jármű típusa:</label>
+                        <select name="type_a" class="form-control">
+                            <option value="car" {% if form is defined and form.type_a == 'car' %}selected{% endif %}>Személyautó</option>
+                            <option value="tram" {% if form is defined and form.type_a == 'tram' %}selected{% endif %}>Villamos</option>
+                            <option value="emergency" {% if form is defined and form.type_a == 'emergency' %}selected{% endif %}>Megkülönböztető jelzésű</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Út típusa:</label>
+                        <select name="road_a" class="form-control">
+                            <option value="paved" {% if form is defined and form.road_a == 'paved' %}selected{% endif %}>Szilárd burkolatú</option>
+                            <option value="dirt" {% if form is defined and form.road_a == 'dirt' %}selected{% endif %}>Földút</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Tábla az Ön útján:</label>
+                        <select name="sign_a" class="form-control">
+                            <option value="none" {% if form is defined and form.sign_a == 'none' %}selected{% endif %}>Egyenrangú út (nincs tábla)</option>
+                            <option value="stop" {% if form is defined and form.sign_a == 'stop' %}selected{% endif %}>STOP Tábla</option>
+                            <option value="yield" {% if form is defined and form.sign_a == 'yield' %}selected{% endif %}>Elsőbbségadás kötelező</option>
+                            <option value="priority" {% if form is defined and form.sign_a == 'priority' %}selected{% endif %}>Főútvonal</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="card vehicle-b">
+                    <h2>Másik ('B' jármű)</h2>
+                    
+                    <div class="form-group">
+                        <label>Jármű típusa:</label>
+                        <select name="type_b" class="form-control">
+                            <option value="car" {% if form is defined and form.type_b == 'car' %}selected{% endif %}>Személyautó</option>
+                            <option value="tram" {% if form is defined and form.type_b == 'tram' %}selected{% endif %}>Villamos</option>
+                            <option value="emergency" {% if form is defined and form.type_b == 'emergency' %}selected{% endif %}>Megkülönböztető jelzésű</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Út típusa:</label>
+                        <select name="road_b" class="form-control">
+                            <option value="paved" {% if form is defined and form.road_b == 'paved' %}selected{% endif %}>Szilárd burkolatú</option>
+                            <option value="dirt" {% if form is defined and form.road_b == 'dirt' %}selected{% endif %}>Földút</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Tábla az Ő útján:</label>
+                        <select name="sign_b" class="form-control">
+                            <option value="none" {% if form is defined and form.sign_b == 'none' %}selected{% endif %}>Egyenrangú út (nincs tábla)</option>
+                            <option value="stop" {% if form is defined and form.sign_b == 'stop' %}selected{% endif %}>STOP Tábla</option>
+                            <option value="yield" {% if form is defined and form.sign_b == 'yield' %}selected{% endif %}>Elsőbbségadás kötelező</option>
+                            <option value="priority" {% if form is defined and form.sign_b == 'priority' %}selected{% endif %}>Főútvonal</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Honnan jön (Önhöz képest):</label>
+                        <select name="dir_b" class="form-control">
+                            <option value="left" {% if form is defined and form.dir_b == 'left' %}selected{% endif %}>Balról</option>
+                            <option value="right" {% if form is defined and form.dir_b == 'right' %}selected{% endif %}>Jobbról</option>
+                            <option value="opposite" {% if form is defined and form.dir_b == 'opposite' %}selected{% endif %}>Szembe</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <input type="submit" value="Helyzet Elemzése" class="btn btn-submit">
+        </form>
+
+        {% if result %}
+        <div class="result-box">
+            <h2>Eredmény:</h2>
+            <p class="result-text">{{ result }}</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <script src="{{ url_for('static', filename='scripts.js') }}"></script>
+</body>
+</html>
