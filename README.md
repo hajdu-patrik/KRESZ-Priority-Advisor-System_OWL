@@ -33,7 +33,7 @@ The system determines the right-of-way between two vehicles using a hybrid reaso
 
 - **Backend:** Python 3.10+
 - **Web Server:** Flask
-- **ML/NLPSemantic Web:** Scikit-learn, TF-IDF, Logistic Regression, Cosine Similarity
+- **Semantic Web:**
     - **Owlready2:** For Ontology manipulation and SWRL rule integration.
     - **Pellet:** For consistency checking and inference.
 - **Frontend:** HTML5, CSS3, JavaScript
