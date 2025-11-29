@@ -138,7 +138,7 @@ source .venv/bin/activate
 ### 3. Install Dependencies
 
 ```bash
-pip install -r imports/requirements.txt
+pip install -r import/requirements.txt
 ```
 
 ### 4. Generate Static Ontology Model
