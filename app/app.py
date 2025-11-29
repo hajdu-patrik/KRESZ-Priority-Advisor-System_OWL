@@ -2,11 +2,11 @@
 import os
 import sys
 from flask import Flask, render_template, request
+from business_logic import calculate_priority
 
 # --- Path Definitions ---
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(BASE_DIR)
-from business_logic import calculate_priority
 
 PROJECT_ROOT = os.path.abspath(os.path.join(BASE_DIR, '..'))
 TEMPLATE_DIR = os.path.join(PROJECT_ROOT, 'template')

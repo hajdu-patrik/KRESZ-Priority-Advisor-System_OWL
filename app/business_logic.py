@@ -1,5 +1,6 @@
 from owlready2 import *
 
+# This is where classes and their relationships are defined. (Ontology + SWRL Rules)
 def calculate_priority(vehicle_a_data, vehicle_b_data):
     """
     KRESZ 28. § alapján eldönti, kinek van elsőbbsége.
