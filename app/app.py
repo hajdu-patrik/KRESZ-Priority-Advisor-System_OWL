@@ -1,4 +1,3 @@
-# --- Importing to use BLL, web and arguments ---
 import os
 import sys
 from flask import Flask, render_template, request

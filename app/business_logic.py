@@ -1,18 +1,13 @@
 from owlready2 import *
 import uuid
 
-# This is where classes and their relationships are defined. (Ontology + SWRL Rules)
-def calculate_priority(vehicle_a_data, vehicle_b_data):
+# --- COMMON ONTOLOGY DEFINITION ---
+def setup_kresz_ontology(onto):
     """
     KRESZ 28. § alapján eldönti, kinek van elsőbbsége.
     Input: dict-ek a járművek adataival (típus, út típusa, tábla, irány).
     """
-    # --- 1. BUILDING ONTOLOGY (In-memory) ---
-    # Generate a unique ID to avoid mixing data in memory with previous calculations
-    unique_id = uuid.uuid4().hex
-    onto_iri = f"http://test.org/kresz_{unique_id}.owl"
-    onto = get_ontology(onto_iri)
-
+    
     with onto:
         # --- Classes (Concepts) ---
         # Representing the hierarchy of traffic entities (OWL Classes)
@@ -123,37 +118,49 @@ def calculate_priority(vehicle_a_data, vehicle_b_data):
             -> yieldsTo(?v1, ?v2)
         """)
 
+def calculate_priority(vehicle_a_data, vehicle_b_data):
+    #1. Create an empty, unique ontology
+    unique_id = uuid.uuid4().hex
+    onto = get_ontology(f"http://test.org/kresz_{unique_id}.owl")
 
+    # 2. CALL THE COMMON FUNCTION
+    # This will populate it with the classes and rules
+    setup_kresz_ontology(onto)
+    
+    with onto:
+        PavedRoad = onto.PavedRoad
+        DirtRoad = onto.DirtRoad
+        StopSign = onto.StopSign
+        YieldSign = onto.YieldSign
+        PrioritySign = onto.PrioritySign
+        Vehicle = onto.Vehicle
+        EmergencyVehicle = onto.EmergencyVehicle
+        Tram = onto.Tram
+        
         # --- ABox: Building the specific case (Assertion Box) ---
         # 1. Creating Road individuals
-        road_a = PavedRoad("Road_A") if vehicle_a_data['road'] == 'paved' else DirtRoad("Road_A")
-        road_b = PavedRoad("Road_B") if vehicle_b_data['road'] == 'paved' else DirtRoad("Road_B")
+        road_a = PavedRoad(f"Road_A_{unique_id}") if vehicle_a_data['road'] == 'paved' else DirtRoad(f"Road_A_{unique_id}")
+        road_b = PavedRoad(f"Road_B_{unique_id}") if vehicle_b_data['road'] == 'paved' else DirtRoad(f"Road_B_{unique_id}")
 
         # 2. Assigning Signs to Roads
-        if vehicle_a_data['sign'] == 'stop': 
-            road_a.hasSign.append(StopSign("Sign_A"))
-        elif vehicle_a_data['sign'] == 'yield': 
-            road_a.hasSign.append(YieldSign("Sign_A"))
-        elif vehicle_a_data['sign'] == 'priority': 
-            road_a.hasSign.append(PrioritySign("Sign_A"))
+        if vehicle_a_data['sign'] == 'stop': road_a.hasSign.append(StopSign(f"Sign_A_{unique_id}"))
+        elif vehicle_a_data['sign'] == 'yield': road_a.hasSign.append(YieldSign(f"Sign_A_{unique_id}"))
+        elif vehicle_a_data['sign'] == 'priority': road_a.hasSign.append(PrioritySign(f"Sign_A_{unique_id}"))
 
-        if vehicle_b_data['sign'] == 'stop': 
-            road_b.hasSign.append(StopSign("Sign_B"))
-        elif vehicle_b_data['sign'] == 'yield': 
-            road_b.hasSign.append(YieldSign("Sign_B"))
-        elif vehicle_b_data['sign'] == 'priority': 
-            road_b.hasSign.append(PrioritySign("Sign_B"))
+        if vehicle_b_data['sign'] == 'stop': road_b.hasSign.append(StopSign(f"Sign_B_{unique_id}"))
+        elif vehicle_b_data['sign'] == 'yield': road_b.hasSign.append(YieldSign(f"Sign_B_{unique_id}"))
+        elif vehicle_b_data['sign'] == 'priority': road_b.hasSign.append(PrioritySign(f"Sign_B_{unique_id}"))
             
         # 3. Creating Vehicle individuals
-        if vehicle_a_data['type'] == 'emergency': v_a = EmergencyVehicle("Vehicle_A")
-        elif vehicle_a_data['type'] == 'tram': v_a = Tram("Vehicle_A")
-        else: v_a = Vehicle("Vehicle_A")
+        if vehicle_a_data['type'] == 'emergency': v_a = EmergencyVehicle(f"Veh_A_{unique_id}")
+        elif vehicle_a_data['type'] == 'tram': v_a = Tram(f"Veh_A_{unique_id}")
+        else: v_a = Vehicle(f"Veh_A_{unique_id}")
         
         v_a.locatedOn.append(road_a)
 
-        if vehicle_b_data['type'] == 'emergency': v_b = EmergencyVehicle("Vehicle_B")
-        elif vehicle_b_data['type'] == 'tram': v_b = Tram("Vehicle_B")
-        else: v_b = Vehicle("Vehicle_B")
+        if vehicle_b_data['type'] == 'emergency': v_b = EmergencyVehicle(f"Veh_B_{unique_id}")
+        elif vehicle_b_data['type'] == 'tram': v_b = Tram(f"Veh_B_{unique_id}")
+        else: v_b = Vehicle(f"Veh_B_{unique_id}")
         
         v_b.locatedOn.append(road_b)
         
@@ -178,7 +185,8 @@ def calculate_priority(vehicle_a_data, vehicle_b_data):
     road_a = vehicle_a_data['road']
     road_b = vehicle_b_data['road']
     dir_b = vehicle_b_data['direction']
-
+    both_subordinate = (sign_a in ['stop', 'yield']) and (sign_b in ['stop', 'yield'])
+    
     
     # --- 3. DECISION TREE (KRESZ Hierarchy Evaluation) ---
     # This section implements logic that is hard to express purely with basic SWRL 
