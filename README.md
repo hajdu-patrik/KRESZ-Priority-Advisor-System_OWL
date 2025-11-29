@@ -69,7 +69,6 @@ The system creates an in-memory ontology (`http://test.org/kresz_full.owl`) for 
 1. **TBox (Terminology)**
     - **Classes:** `Vehicle` (Subclasses: `Tram`, `EmergencyVehicle`), `Road` (Subclasses: `PavedRoad`, `DirtRoad`), `TrafficSign` (`StopSign`, `PrioritySignv, etc.).
     - **Properties** `locatedOn` (Vehicle $\to$ Road), `hasSign` (Road $\to$ Sign), `isRightOf` (Spatial relation).
-
 2. **Reasoning (SWRL & Python)**
 The logic follows a strict hierarchy:
     1. **Emergency Vehicles:** Always take precedence (unless meeting another emergency vehicle).
@@ -78,6 +77,33 @@ The logic follows a strict hierarchy:
     4. **Equal Situations:** If signs/roads are equal rank:
         - **Tram Rule:** Trams take priority.
         - **Right-hand Rule:** The vehicle coming from the right has priority.
+
+---
+
+## 📝 Implementation of Course Requirements
+
+**Dynamic Ontology Construction (Requirement 3)**
+Instead of using a static file from Protege, the ontology is built **programmatically using Owlready2** in `business_logic.py`. This approach allows for dynamic instantiation of ABox individuals based on user input, making the system more flexible and robust than a static `.owl` file.
+
+**Defined Query Scenarios (Requirement 4)**
+The system dynamically evaluates any user-defined scenario. Below are specific test cases (queries) that demonstrate the rule engine's capabilities:
+
+1. **Emergency Vehicle Priority:**
+    - *Input:* User (Car) vs. Other (Emergency Vehicle).
+    - *Rule:* `Vehicle(?v1), EmergencyVehicle(?v2) -> yieldsTo(?v1, ?v2)`
+    - *Result:* **User yields.**
+2. **Sign Hierarchy:**
+    - *Input:* User (STOP Sign) vs. Other (Priority Road).
+    - *Rule:* `StopSign(?s1) ^ PrioritySign(?s2) -> yieldsTo(?v1, ?v2)`
+    - *Result:* **User yields.**
+3. **Tram Rule (Equal Situation):**
+    - *Input:* Equal intersection (both Paved, no Signs), Other is a Tram coming from Left.
+    - *Rule:* `Tram(?v2) ^ ... -> yieldsTo(?v1, ?v2)`
+    - *Result:* **User yields.**
+4. **Emergency Vehicle Priority:**
+    - *Input:* Equal intersection, Other vehicle coming from Right.
+    - *Rule:* `isRightOf(?v2, ?v1) -> yieldsTo(?v1, ?v2)`
+    - *Result:* **User yields.**
 
 ---
 
