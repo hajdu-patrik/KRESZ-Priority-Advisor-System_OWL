@@ -26,6 +26,7 @@ The system determines the right-of-way between two vehicles using a hybrid reaso
     - *Right-hand Rule*
 - 🌐 **Web Interface** – clean, responsive UI using Flask and Jinja2 templates.
 - 🌗 **Dark/Light Mode** – user preference is saved in local storage.
+- 📂 **Ontology Export** - ability to generate and save the static OWL model file.
 
 ---
 
@@ -45,6 +46,7 @@ The system determines the right-of-way between two vehicles using a hybrid reaso
 KRESZ_Priority_Advisor_System/
 ├── app/
 │   ├── business_logic.py   # Core Ontology definition, SWRL rules, and Decision Tree
+│   ├── generate_ontology.py # Script to export the static .owl file
 │   └── app.py              # Flask server controller and routing
 │
 ├── import/
@@ -54,6 +56,9 @@ KRESZ_Priority_Advisor_System/
 │   ├── style.css
 │   ├── scripts.js
 │   └── icon.ico
+│
+├── model/
+│   └── kresz_model.owl
 │
 └── template/
     ├── index.html
@@ -136,7 +141,14 @@ source .venv/bin/activate
 pip install -r imports/requirements.txt
 ```
 
-### 4. Run the Application
+### 4. Generate Static Ontology Model
+
+Before running the app, you can generate the static `.owl` file (saved to `model/`):
+```bash
+python app/generate_ontology.py
+```
+
+### 5. Run the Application
 
 To launch the server (the script automatically handles the split folder structure):
 ```bash
