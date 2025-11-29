@@ -1,4 +1,5 @@
 from owlready2 import *
+import uuid
 
 # This is where classes and their relationships are defined. (Ontology + SWRL Rules)
 def calculate_priority(vehicle_a_data, vehicle_b_data):
@@ -7,8 +8,10 @@ def calculate_priority(vehicle_a_data, vehicle_b_data):
     Input: dict-ek a járművek adataival (típus, út típusa, tábla, irány).
     """
     # --- 1. BUILDING ONTOLOGY (In-memory) ---
-    # TBox initialization (Terminology Box)
-    onto = get_ontology("http://test.org/kresz_full.owl")
+    # Generate a unique ID to avoid mixing data in memory with previous calculations
+    unique_id = uuid.uuid4().hex
+    onto_iri = f"http://test.org/kresz_{unique_id}.owl"
+    onto = get_ontology(onto_iri)
 
     with onto:
         # --- Classes (Concepts) ---
@@ -181,8 +184,10 @@ def calculate_priority(vehicle_a_data, vehicle_b_data):
     # This section implements logic that is hard to express purely with basic SWRL 
     # 1. Emergency vehicle signal (Priority Level 1)
     if type_b == 'emergency' and type_a != 'emergency':
+        onto.destroy()
         return "⚠️ ELSŐBBSÉGET KELL ADNOD! (Megkülönböztető jelzést használó jármű)"
     if type_a == 'emergency' and type_b != 'emergency':
+        onto.destroy()
         return "✅ NEKED VAN ELSŐBBSÉGED! (Megkülönböztető jelzést használsz)"
 
     # 2. Sign-based decision (Checking SWRL inference results)
@@ -190,12 +195,15 @@ def calculate_priority(vehicle_a_data, vehicle_b_data):
     both_subordinate = (sign_a in ['stop', 'yield']) and (sign_b in ['stop', 'yield'])
     
     if v_b in v_a.yieldsTo and not both_subordinate:
+        onto.destroy()
         return "⚠️ ELSŐBBSÉGET KELL ADNOD! (Tábla szabályozás)"
 
     # 3. Dirt road rule (Priority Level 3)
     if road_a == 'dirt' and road_b == 'paved':
+        onto.destroy()
         return "⚠️ ELSŐBBSÉGET KELL ADNOD! (Földútról érkezel)"
     if road_b == 'dirt' and road_a == 'paved':
+        onto.destroy()
         return "✅ NEKED VAN ELSŐBBSÉGED! (A másik jármű földútról jön)"
 
     # 4. Equal-rank intersection logic (Priority Level 4)
@@ -208,16 +216,22 @@ def calculate_priority(vehicle_a_data, vehicle_b_data):
     if is_equal_situation:
         # Tram rule (Special exception in equal situations)
         if type_b == 'tram' and type_a != 'tram':
+            onto.destroy()
             return "⚠️ ELSŐBBSÉGET KELL ADNOD! (A villamosnak egyenrangú helyzetben elsőbbsége van)"
         if type_a == 'tram' and type_b != 'tram':
+            onto.destroy()
             return "✅ NEKED VAN ELSŐBBSÉGED! (Villamosként elsőbbséged van)"
 
         # Right-hand rule (General rule for equal situations)
         if dir_b == 'right':
+            onto.destroy()
             return "⚠️ ELSŐBBSÉGET KELL ADNOD! (Jobbkéz-szabály)"
         if dir_b == 'left':
+             onto.destroy()
              return "✅ NEKED VAN ELSŐBBSÉGED! (A másik jármű balról jön)"
         if dir_b == 'opposite':
+            onto.destroy()
             return "⚠️/✅ Egyenesen haladva elsőbbséged van, balra kanyarodva nem."
 
+    onto.destroy()
     return "✅ NEKED VAN ELSŐBBSÉGED (vagy a másik járműnek táblája van)."
