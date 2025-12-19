@@ -1,17 +1,22 @@
 import os
 import sys
 from flask import Flask, render_template, request
-from business_logic import calculate_priority
 
-# --- Path Definitions ---
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-sys.path.append(BASE_DIR)
+
+if BASE_DIR not in sys.path:
+    sys.path.append(BASE_DIR)
 
 PROJECT_ROOT = os.path.abspath(os.path.join(BASE_DIR, '..'))
+
 TEMPLATE_DIR = os.path.join(PROJECT_ROOT, 'template')
 STATIC_DIR = os.path.join(PROJECT_ROOT, 'static')
 
-# Initialize the Flask application
+try:
+    from business_logic import calculate_priority
+except ImportError as e:
+    print(f"ERROR: Failed to import the business_logic module: {e}")
+
 app = Flask(__name__, template_folder=TEMPLATE_DIR, static_folder=STATIC_DIR)
 
 
