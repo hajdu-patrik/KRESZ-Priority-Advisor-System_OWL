@@ -1,6 +1,7 @@
 ![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=flat&logo=python&logoColor=white)
 ![Flask](https://img.shields.io/badge/Framework-Flask-000000?style=flat&logo=flask&logoColor=white)
 ![Owlready2](https://img.shields.io/badge/Semantic_Web-Owlready2-A42E2B?style=flat&logo=python&logoColor=white)
+![Vercel](https://img.shields.io/badge/Deployment-Vercel-000000?style=flat&logo=vercel&logoColor=white)
 ![SWRL](https://img.shields.io/badge/Logic-SWRL%20%26%20Pellet-4B0082?style=flat)
 ![HTML5](https://img.shields.io/badge/Frontend-HTML5-E34F26?style=flat&logo=html5&logoColor=white)
 ![CSS3](https://img.shields.io/badge/Style-CSS3-1572B6?style=flat&logo=css3&logoColor=white)
@@ -14,7 +15,14 @@ The system determines the right-of-way between two vehicles using a hybrid reaso
 
 ---
 
-## 🚀 Features
+## 🚀 Live Demo
+
+**Check out the live application here:**
+👉 **[https://kresz-priority-advisor-system.vercel.app](https://kresz-priority-advisor-system.vercel.app)**
+
+---
+
+## 📚 Features
 
 - 🚦 **Traffic Situation Modeling** – dynamic creation of ABox individuals (Vehicles, Roads, Signs) based on user input.
 - 🧠 **Semantic Reasoning** – uses the **Pellet reasoner** to infer priority relationships (`yieldsTo`) based on defined SWRL rules.
@@ -45,12 +53,11 @@ The system determines the right-of-way between two vehicles using a hybrid reaso
 ```
 KRESZ_Priority_Advisor_System/
 ├── app/
-│   ├── business_logic.py   # Core Ontology definition, SWRL rules, and Decision Tree
-│   ├── generate_ontology.py # Script to export the static .owl file
-│   └── app.py              # Flask server controller and routing
+│   ├── business_logic.py
+│   ├── generate_ontology.py
+│   └── app.py
 │
-├── import/
-│   └── requirements.txt
+├── requirements.txt
 │
 ├── static/
 │   ├── style.css
@@ -178,3 +185,14 @@ Open it in your browser to use it.
 
 **Result:**
     ⚠️ **ELSŐBBSÉGET KELL ADNOD!** (Tábla szabályozás) (*Since Vehicle B is on a priority road and you have a STOP sign, the SWRL rule infers that you must yield*)
+
+---
+
+## 📦 Deployment
+
+This project is configured for automated deployment via **Vercel**.
+Any push to the `main` branch automatically triggers a new build and deployment.
+
+| Environment | Status |
+| :--- | :--- |
+| **Production** | [![Vercel App](https://img.shields.io/badge/Visit-Live_App-success?style=for-the-badge&logo=vercel)](https://kresz-priority-advisor-system.vercel.app) |
